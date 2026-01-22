@@ -11,8 +11,8 @@ def intervalometer(start, end, interval):
     global intervalometer_running
     intervalometer_running = True
 
-    while intervalometer_running and datetime.now() < end:
-        print("Shutter triggered")
+    while intervalometer_running:
+        #print("Shutter triggered")
         # trigger_camera()
         time.sleep(interval)
 
@@ -22,12 +22,13 @@ def index():
 
     if request.method == "POST":
         if "set" in request.form:
-            start = datetime.strptime(request.form["start"], "%H:%M")
-            end = datetime.strptime(request.form["end"], "%H:%M")
+            start = request.form["start"]
+            end = request.form["end"]
             interval = int(request.form["interval"])
             print("start:", start)
             print("end:", end)
             print("interval:", interval)
+
             threading.Thread(
                 target=intervalometer,
                 args=(start, end, interval),
