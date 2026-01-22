@@ -25,11 +25,9 @@ def index():
             start = datetime.strptime(request.form["start"], "%H:%M")
             end = datetime.strptime(request.form["end"], "%H:%M")
             interval = int(request.form["interval"])
-
-            now = datetime.now()
-            start = start.replace(year=now.year, month=now.month, day=now.day)
-            end = end.replace(year=now.year, month=now.month, day=now.day)
-
+            print("start:", start)
+            print("end:", end)
+            print("interval:", interval)
             threading.Thread(
                 target=intervalometer,
                 args=(start, end, interval),
@@ -50,4 +48,3 @@ def stop():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-    
