@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Intervalometer</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 400px;
+            margin: auto;
+            padding-top: 40px;
+        }
+        label, input, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Intervalometer</h2>
+
+    <form method="POST">
+        <label>Start Time</label>
+        <input type="time" name="start" required>
+
+        <label>End Time</label>
+        <input type="time" name="end" required>
+
+        <label>Interval (seconds)</label>
+        <input type="number" name="interval" min="1" required>
+
+        <button type="submit" name="set">Set Intervalometer</button>
+        <button type="submit" name="shutter">Manual Shutter</button>
+    </form>
+</body>
+</html>
