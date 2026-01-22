@@ -1,0 +1,52 @@
+from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime
+import threading
+import time
+
+app = Flask(__name__)
+
+intervalometer_running = False
+
+def intervalometer(start, end, interval):
+    global intervalometer_running
+    intervalometer_running = True
+
+    while intervalometer_running and datetime.now() < end:
+        print("Shutter triggered")
+        # trigger_camera()
+        time.sleep(interval)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    global intervalometer_running
+
+    if request.method == "POST":
+        if "set" in request.form:
+            start = datetime.strptime(request.form["start"], "%H:%M")
+            end = datetime.strptime(request.form["end"], "%H:%M")
+            interval = int(request.form["interval"])
+
+            now = datetime.now()
+            start = start.replace(year=now.year, month=now.month, day=now.day)
+            end = end.replace(year=now.year, month=now.month, day=now.day)
+
+            threading.Thread(
+                target=intervalometer,
+                args=(start, end, interval),
+                daemon=True
+            ).start()
+
+        elif "shutter" in request.form:
+            print("Manual shutter pressed")
+            # trigger_camera()
+
+    return render_template("index.html")
+
+@app.route("/stop")
+def stop():
+    global intervalometer_running
+    intervalometer_running = False
+    return redirect(url_for("index"))
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
