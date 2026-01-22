@@ -40,5 +40,16 @@
         <button type="submit" name="shutter">Manual Shutter</button>
     </form>
 
+    <h3>Sensor Data</h3>
+    {% if data %}
+    <ul>
+        {% for key, value in data.items() %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No data yet.</p>
+    {% endif %}
+
 </body>
 </html>
