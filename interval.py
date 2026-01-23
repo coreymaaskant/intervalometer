@@ -55,12 +55,23 @@ def read_serial():
             if data_dict:
                 latest_data = data_dict
 
-                payload = json.dumps({
-                    "timestamp": datetime.utcnow().isoformat(),
-                    "data": data_dict
-                })
+            payload_dict = {
+                "measurement": "environment",
+                "device": "intervalometer_01"
+            }
 
-                mqtt_client.publish(MQTT_TOPIC, payload)
+            for k, v in data_dict.items():
+                try:
+                    payload_dict[k] = float(v)
+                except ValueError:
+                    continue  # skip non-numeric fields
+
+            mqtt_client.publish(
+                MQTT_TOPIC,
+                json.dumps(payload_dict),
+                qos=1,
+                retain=False
+            )
 
         except Exception as e:
             print("Serial/MQTT error:", e)
