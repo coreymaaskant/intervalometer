@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from datetime import datetime
 import threading
 import time
@@ -6,6 +6,7 @@ import serial
 latest_data = {}
 import json
 import paho.mqtt.client as mqtt
+
 
 MQTT_BROKER = "192.168.0.35"
 MQTT_PORT = 1883
@@ -188,6 +189,10 @@ def stop():
     global intervalometer_running
     intervalometer_running = False
     return redirect(url_for("index"))
+
+@app.route("/latest")
+def latest():
+    return jsonify(latest_data)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

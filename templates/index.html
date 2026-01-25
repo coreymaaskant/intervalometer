@@ -1,63 +1,149 @@
-</html><!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Intervalometer</title>
+    <meta charset="UTF-8">
+    <title>Intervalometer Dashboard</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial;
-            max-width: 800px;
-            margin: auto;
-            padding-top: 40px;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2a4365;
         }
 
         .container {
             display: flex;
-            gap: 40px; /* space between forms and sensor data */
+            gap: 30px;
             align-items: flex-start;
+            max-width: 1000px;
+            margin: 20px auto;
         }
 
-        form, .sensor-data {
-            flex: 1; /* each takes half the width */
+        @media (max-width: 800px) {
+            .container {
+                flex-direction: column;
+            }
         }
 
-        label, input, button {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
+        .controls, .sensor-data {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+            flex: 1;
         }
 
-        button {
+        .controls form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .controls label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .controls input, .controls button {
             padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .controls button {
+            background-color: #2a4365;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .controls button:hover {
+            background-color: #1f2f4d;
+        }
+
+        .sensor-data h3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            color: #2a4365;
         }
 
         .sensor-data ul {
             list-style: none;
             padding-left: 0;
+            margin: 0;
         }
 
         .sensor-data li {
-            margin-bottom: 5px;
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sensor-data li:last-child {
+            border-bottom: none;
+        }
+
+        .sensor-field {
+            font-weight: 600;
+        }
+
+        .sensor-tag {
+            font-style: italic;
+            color: #555;
+        }
+
+        .refresh-btn {
+            background-color: #3182ce;
+            border: none;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .refresh-btn:hover {
+            background-color: #2b6cb0;
         }
     </style>
 </head>
 <body>
+    <h1>Intervalometer Dashboard</h1>
+
     <div class="container">
-        <!-- Intervalometer Controls -->
+        <!-- Controls -->
         <div class="controls">
+            <h3>Intervalometer Controls</h3>
             <form method="POST">
-                <label>Start Time</label>
-                <input type="time" name="start" required>
+                <label for="start">Start Time</label>
+                <input type="time" name="start" id="start" required>
 
-                <label>End Time</label>
-                <input type="time" name="end" required>
+                <label for="end">End Time</label>
+                <input type="time" name="end" id="end" required>
 
-                <label>Interval (seconds)</label>
-                <input type="number" name="interval" min="1" required>
+                <label for="interval">Interval (seconds)</label>
+                <input type="number" name="interval" id="interval" min="1" required>
 
                 <button type="submit" name="set">Set Intervalometer</button>
             </form>
 
-            <!-- Manual shutter form -->
+            <h3>Manual Control</h3>
             <form method="POST">
                 <button type="submit" name="shutter">Manual Shutter</button>
             </form>
@@ -65,16 +151,65 @@
 
         <!-- Sensor Data -->
         <div class="sensor-data">
-            {% if data %}
-                <ul>
-                    {% for key, value in data.items() %}
-                        <li><strong>{{ key }}:</strong> {{ value }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No data yet.</p>
-            {% endif %}
+            <h3>
+                Sensor Data
+                <button class="refresh-btn" onclick="fetchData()">Refresh</button>
+            </h3>
+
+            <div id="sensor-list">
+                {% if data %}
+                    <ul>
+                        {% for key, value in data.items() %}
+                            {% if key.startswith('tag_') %}
+                                <li>
+                                    <span class="sensor-tag">{{ key[4:] }}</span>
+                                    <span>{{ value }}</span>
+                                </li>
+                            {% elif key not in ['measurement','device'] %}
+                                <li>
+                                    <span class="sensor-field">{{ key }}</span>
+                                    <span>{{ value }}</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No data yet.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/latest');
+                const data = await response.json();
+                const container = document.getElementById('sensor-list');
+
+                if (!data || Object.keys(data).length === 0) {
+                    container.innerHTML = '<p>No data yet.</p>';
+                    return;
+                }
+
+                let html = '<ul>';
+                for (const [k, v] of Object.entries(data)) {
+                    if (k.startsWith('tag_')) {
+                        html += `<li><span class="sensor-tag">${k.slice(4)}</span><span>${v}</span></li>`;
+                    } else if (k !== 'measurement' && k !== 'device') {
+                        html += `<li><span class="sensor-field">${k}</span><span>${v}</span></li>`;
+                    }
+                }
+                html += '</ul>';
+                container.innerHTML = html;
+            } catch (err) {
+                console.error("Fetch failed:", err);
+            }
+        }
+
+        // Auto-refresh every 2 seconds (comment out if undesired)
+        setInterval(fetchData, 2000);
+        fetchData();
+    </script>
 </body>
 </html>
