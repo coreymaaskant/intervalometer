@@ -128,26 +128,33 @@
 
     <div class="container">
         <!-- Controls -->
-        <div class="controls">
-            <h3>Intervalometer Controls</h3>
-            <form method="POST">
-                <label for="start">Start Time</label>
-                <input type="time" name="start" id="start" required>
+<div class="controls">
+    <h3>Intervalometer Controls</h3>
+    <form method="POST">
+        <!-- Alarm Toggle -->
+        <label for="alarm">Alarm Enable</label>
+        <label style="display:flex; align-items:center; gap:10px; font-weight:normal;">
+            <input type="checkbox" id="alarm" onchange="toggleAlarm(this)">
+            Enable alarm window
+        </label>
 
-                <label for="end">End Time</label>
-                <input type="time" name="end" id="end" required>
+        <label for="start">Start Time</label>
+        <input type="time" name="start" id="start" required>
 
-                <label for="interval">Interval (seconds)</label>
-                <input type="number" name="interval" id="interval" min="1" required>
+        <label for="end">End Time</label>
+        <input type="time" name="end" id="end" required>
 
-                <button type="submit" name="set">Set Intervalometer</button>
-            </form>
+        <label for="interval">Interval (seconds)</label>
+        <input type="number" name="interval" id="interval" min="1" required>
 
-            <h3>Manual Control</h3>
-            <form method="POST">
-                <button type="submit" name="shutter">Manual Shutter</button>
-            </form>
-        </div>
+        <button type="submit" name="set">Set Intervalometer</button>
+    </form>
+
+    <h3>Manual Control</h3>
+    <form method="POST">
+        <button type="submit" name="shutter">Manual Shutter</button>
+    </form>
+</div>
 
         <!-- Sensor Data -->
         <div class="sensor-data">
@@ -179,7 +186,6 @@
             </div>
         </div>
     </div>
-
     <script>
         async function fetchData() {
             try {
@@ -208,8 +214,29 @@
         }
 
         // Auto-refresh every 2 seconds (comment out if undesired)
-        setInterval(fetchData, 2000);
+        setInterval(fetchData, 5000);
         fetchData();
+    </script>
+    <script>
+        async function toggleAlarm(el) {
+        try {
+        const enable = el.checked;
+
+
+        const res = await fetch("/alarm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enable })
+        });
+
+
+        const data = await res.json();
+        console.log("Alarm command sent:", data.sent);
+        } catch (err) {
+        console.error("Alarm toggle failed:", err);
+        el.checked = !el.checked; // revert UI on failure
+        }
+        }
     </script>
 </body>
 </html>

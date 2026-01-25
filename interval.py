@@ -80,6 +80,13 @@ def read_serial():
 
 threading.Thread(target=read_serial, daemon=True).start()
 
+def build_alarm_only_string(alarm_enable):
+    # 27 data bytes + 'x'
+    # Byte 23 = alarm_enable
+    chars = ["0"] * 27
+    chars[23] = "1" if alarm_enable else "0"
+    return "".join(chars) + "x"
+
 def send_serial(cmd):
     print("Sending:", cmd)
     ser.write(cmd.encode())
@@ -184,6 +191,7 @@ def index():
             send_serial(cmd)
 
     return render_template("index.html", data=latest_data)
+
 @app.route("/stop")
 def stop():
     global intervalometer_running
@@ -193,6 +201,18 @@ def stop():
 @app.route("/latest")
 def latest():
     return jsonify(latest_data)
+
+@app.route("/alarm", methods=["POST"])
+def alarm_toggle():
+    alarm_enable = request.json.get("enable", False)
+
+    cmd = build_alarm_only_string(alarm_enable)
+    send_serial(cmd)
+
+    return jsonify({
+        "alarm": int(alarm_enable),
+        "sent": cmd
+    })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
