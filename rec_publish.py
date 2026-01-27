@@ -16,7 +16,7 @@ SERIAL_TIMEOUT = 1
 # ==========================
 MQTT_BROKER = "192.168.0.35"      # e.g. "192.168.1.10"
 MQTT_PORT = 1883
-MQTT_TOPIC = "sensors/telemetry"
+MQTT_TOPIC = "intervalometer/sensors"
 MQTT_CLIENT_ID = "serial_to_mqtt"
 
 # ==========================
