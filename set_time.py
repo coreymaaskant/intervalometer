@@ -29,6 +29,13 @@ if trigger not in ("0", "1"):
     ser.close()
     exit()
 
+print("would you like to half press the shutter? (1 = Yes, 0 = No):")
+half_press = input()
+if half_press not in ("0", "1"):
+    print("Invalid half press value. Use 1 for Yes or 0 for No.")
+    ser.close()
+    exit()
+
 # get temperature setpoint (°C), max 30
 while True:
     print("temperature setpoint (°C, max 30):")
@@ -66,6 +73,7 @@ dateSt = (
     alarm +
     trigger +
     temp_str +
+    half_press +
     'x'
 )
 
