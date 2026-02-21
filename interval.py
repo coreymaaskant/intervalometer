@@ -97,7 +97,8 @@ def build_serial_string(
     end_time=None,
     alarm_enable=0,
     manual_shutter=0,
-    temp_setpoint=0
+    temp_setpoint=0,
+    half_shutter=0
 ):
     now = datetime.now()
 
@@ -128,6 +129,8 @@ def build_serial_string(
     A  = str(alarm_enable)
     T  = str(manual_shutter)
     Te = f"{int(temp_setpoint):02d}"
+    H  = str(half_shutter)
+
 
     command = (
         YY + MM + DD + w +
@@ -136,7 +139,8 @@ def build_serial_string(
         A1H + A1M +
         A2H + A2M +
         A + T +
-        Te +
+        Te + 
+        H +
         "x"
     )
 
@@ -157,7 +161,7 @@ def index():
             try:
                 temp_val = float(request.form.get("temp_setpoint", 20))
             except ValueError:
-                temp_val = 20.0
+                temp_val = 10.0
 
             if temp_val > 30:
                 temp_val = 30.0
@@ -174,7 +178,8 @@ def index():
                 end_time=end,
                 alarm_enable=1,
                 manual_shutter=0,
-                temp_setpoint=temp_setpoint
+                temp_setpoint=temp_setpoint,
+                halfshutter=0
             )
             send_serial(cmd)
 
@@ -196,6 +201,7 @@ def index():
                 "00" "00"
                 "0" "1"
                 "00"
+                "0"
                 "x"
             )
 
