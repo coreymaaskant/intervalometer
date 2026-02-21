@@ -6,7 +6,7 @@ import serial
 latest_data = {}
 import json
 import paho.mqtt.client as mqtt
-#putting this comment in at the top to test 
+
 
 MQTT_BROKER = "192.168.0.35"
 MQTT_PORT = 1883
