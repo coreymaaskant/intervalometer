@@ -153,16 +153,28 @@ def index():
             start = request.form["start"]
             end = request.form["end"]
             interval = int(request.form["interval"])
+
+            try:
+                temp_val = float(request.form.get("temp_setpoint", 20))
+            except ValueError:
+                temp_val = 20.0
+
+            if temp_val > 30:
+                temp_val = 30.0
+
+            temp_setpoint = int(round(temp_val))
+
             print("start:", start)
             print("end:", end)
             print("interval:", interval)
+            print("temp_setpoint:", temp_setpoint)
             cmd = build_serial_string(
                 shutter_interval=interval,
                 start_time=start,
                 end_time=end,
                 alarm_enable=1,
                 manual_shutter=0,
-                temp_setpoint=20  # or from another form field
+                temp_setpoint=temp_setpoint
             )
             send_serial(cmd)
 
