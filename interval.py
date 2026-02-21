@@ -179,7 +179,7 @@ def index():
                 alarm_enable=0,
                 manual_shutter=0,
                 temp_setpoint=temp_setpoint,
-                halfshutter=0
+                half_shutter=0
             )
             send_serial(cmd)
 
