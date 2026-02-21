@@ -176,7 +176,7 @@ def index():
                 shutter_interval=interval,
                 start_time=start,
                 end_time=end,
-                alarm_enable=1,
+                alarm_enable=0,
                 manual_shutter=0,
                 temp_setpoint=temp_setpoint,
                 halfshutter=0
