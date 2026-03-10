@@ -208,6 +208,22 @@ def index():
             cmd = cmd.replace(" ", "")
             send_serial(cmd)
 
+        elif "half_shutter" in request.form:
+            print("Half shutter pressed")
+            cmd = (
+                "00" "00" "00" "0"
+                "00" "00" "00"
+                "00"
+                "00" "00"
+                "00" "00"
+                "0" "0"
+                "00"
+                "1"
+                "x"
+            )
+            cmd = cmd.replace(" ", "")
+            send_serial(cmd)
+
     return render_template("index.html", data=latest_data)
 
 @app.route("/stop")
