@@ -18,7 +18,7 @@ mqtt_client.loop_start()  # background network thread
 
 
 app = Flask(__name__)
-ser = serial.Serial("/dev/ttyUSB0", 57600, timeout=1)
+ser = serial.Serial("/dev/serial0", 9600, timeout=1)
 serial_lock = threading.Lock()
 latest_data = {}
 
