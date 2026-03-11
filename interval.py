@@ -8,7 +8,7 @@ import json
 import paho.mqtt.client as mqtt
 
 
-MQTT_BROKER = "192.168.0.35"
+MQTT_BROKER = "127.0.0.1"
 MQTT_PORT = 1883
 MQTT_TOPIC = "intervalometer/sensors"
 
