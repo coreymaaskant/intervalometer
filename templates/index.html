@@ -139,16 +139,16 @@
         </label>
 
         <label for="start">Start Time</label>
-        <input type="time" name="start" id="start" required>
+        <input type="time" name="start" id="start" value="09:00">
 
         <label for="end">End Time</label>
-        <input type="time" name="end" id="end" required>
+        <input type="time" name="end" id="end" value="09:01">
 
         <label for="temp_setpoint">Temperature Setpoint (°C, max 30)</label>
         <input type="number" name="temp_setpoint" id="temp_setpoint" max="30" value="20">
 
         <label for="interval">Interval (seconds)</label>
-        <input type="number" name="interval" id="interval" min="0" required>
+        <input type="number" name="interval" id="interval" min="0" value = "0">
 
         <button type="submit" name="set">Set Intervalometer</button>
     </form>
