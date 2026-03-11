@@ -1,2 +1,2 @@
 source .venv/bin/activate
-nohup python3 interval.py
+nohup python3 interval.py > /dev/null 2>&1 &
