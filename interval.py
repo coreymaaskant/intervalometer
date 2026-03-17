@@ -39,9 +39,13 @@ def read_serial():
     while True:
         try:
             with serial_lock:
-                line = ser.readline().decode(errors="ignore").strip()
+                if ser.in_waiting > 0:
+                    line = ser.readline().decode(errors="ignore").strip()
+                else:
+                    line = None
 
             if not line:
+                time.sleep(0.1)
                 continue
 
             # Example: "Temp:18.65 Humidity:27.68 Pressure:99493.50"
