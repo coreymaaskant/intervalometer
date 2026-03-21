@@ -214,7 +214,7 @@ def index():
             send_serial(cmd)
             
             try:
-                time.sleep(1)  # Wait for the camera to process the command
+                time.sleep(5)  # Wait for the camera to process the command
                 subprocess.run(
                     "gphoto2 --get-file=$(gphoto2 -f \"/DCIM/100EOS5D\" --num-files | awk '{print $7}') --hook-script '/home/pi/photos/script.sh'",
                     shell=True
