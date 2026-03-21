@@ -190,6 +190,12 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        <div class="controls" style="text-align: center;">
+            <h3>Captured Image</h3>
+            <img src="{{ url_for('static', filename='image.JPG') }}" alt="image.JPG" style="max-width: 100%; border-radius: 6px;">
+        </div>
+    </div>
     <script>
         async function fetchData() {
             try {
