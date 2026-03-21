@@ -3,6 +3,7 @@ from datetime import datetime
 import threading
 import time
 import serial
+import subprocess
 latest_data = {}
 import json
 import paho.mqtt.client as mqtt
@@ -211,6 +212,15 @@ def index():
 
             cmd = cmd.replace(" ", "")
             send_serial(cmd)
+            
+            try:
+                time.sleep(1)  # Wait for the camera to process the command
+                subprocess.run(
+                    "gphoto2 --get-file=$(gphoto2 -f \"/DCIM/100EOS5D\" --num-files | awk '{print $7}') --hook-script '/home/pi/photos/script.sh'",
+                    shell=True
+                )
+            except Exception as e:
+                print(f"Error executing gphoto2: {e}")
 
         elif "half_shutter" in request.form:
             print("Half shutter pressed")
